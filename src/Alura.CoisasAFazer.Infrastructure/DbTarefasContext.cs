@@ -15,7 +15,8 @@ namespace Alura.CoisasAFazer.Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("");
+            if (optionsBuilder.IsConfigured) return;
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DbTarefas;TrustServerCertificate=True;");
         }
 
         public DbSet<Tarefa> Tarefas { get; set; }
