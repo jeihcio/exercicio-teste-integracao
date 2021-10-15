@@ -13,6 +13,11 @@ namespace Alura.CoisasAFazer.Infrastructure
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("");
+        }
+
         public DbSet<Tarefa> Tarefas { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
     }

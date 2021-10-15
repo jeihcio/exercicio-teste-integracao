@@ -18,7 +18,8 @@ namespace Alura.CoisasAFazer.Testes
                 new DateTime(2019, 12, 31)
             );
 
-            var handler = new CadastraTarefaHandler();
+            var repo = new RepositorioFake();
+            var handler = new CadastraTarefaHandler(repo);
 
             // act
             handler.Execute(comando); // SUT >> CadastraTarefaHandlerExecute
