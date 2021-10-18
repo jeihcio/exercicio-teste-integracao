@@ -27,7 +27,7 @@ namespace Alura.CoisasAFazer.Testes
                 .Options;
 
             var contexto = new DbTarefasContext(options);
-            var repo = new RepositorioTarefa(contexto);
+            var repo = new RepositorioFake();
             var handler = new CadastraTarefaHandler(repo);
 
             // act
