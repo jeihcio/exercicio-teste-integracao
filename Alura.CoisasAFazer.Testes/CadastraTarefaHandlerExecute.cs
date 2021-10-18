@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using Xunit;
+using Moq;
 
 namespace Alura.CoisasAFazer.Testes
 {
@@ -50,12 +51,12 @@ namespace Alura.CoisasAFazer.Testes
                 new DateTime(2019, 12, 31)
             );
 
-            var options = new DbContextOptionsBuilder<DbTarefasContext>()
-               .UseInMemoryDatabase("DbTarefasContext")
-               .Options;
+            var mock = new Mock<IRepositorioTarefas>();
 
-            var contexto = new DbTarefasContext(options);
-            var repo = new RepositorioTarefa(contexto);
+            mock.Setup(x => x.IncluirTarefas(It.IsAny<Tarefa[]>()))
+                .Throws(new Exception("Houve um erro na inclusão de tarefas"));
+
+            var repo = mock.Object;
             var handler = new CadastraTarefaHandler(repo);
 
             // act
