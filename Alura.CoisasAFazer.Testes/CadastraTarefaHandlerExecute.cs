@@ -104,5 +104,55 @@ namespace Alura.CoisasAFazer.Testes
                 It.IsAny<Func<object, Exception, string>>() // função que converte objeto+exceção >> string
             ), Times.Once());
         }
+
+        delegate void CapturaMensagemLog(
+            LogLevel level,
+            EventId eventId,
+            object state,
+            Exception exception,
+            Func<object, Exception, string> function
+        );
+
+        [Fact]
+        public void DataTarefaComInfoValidasDeveLogar()
+        {
+            // arrange
+            var tituloTarefaEsperado = "Usar Moq para aprofundar conhecimento de API";
+            var comando = new CadastraTarefa(
+                tituloTarefaEsperado,
+                new Categoria("Estudo"),
+                new DateTime(2019, 12, 31)
+            );
+
+            var mockLogger = new Mock<ILogger<CadastraTarefaHandler>>();
+
+            LogLevel levelCapturado = LogLevel.Information;
+            string mensagemCapturada = string.Empty;
+
+            CapturaMensagemLog captura = (level, eventId, state, exception, func) =>
+            {
+                levelCapturado = level;
+                mensagemCapturada = func(state, exception);
+            };
+
+            mockLogger.Setup(x =>
+               x.Log(
+                   It.IsAny<LogLevel>(), //nível de log => LogError
+                   It.IsAny<EventId>(), //identificador do evento
+                   It.IsAny<object>(), //objeto que será logado
+                   It.IsAny<Exception>(), //exceção que será logada 
+                   It.IsAny<Func<object, Exception, string>>() // função que converte objeto+exceção >> string
+               )).Callback(captura);
+
+            var mock = new Mock<IRepositorioTarefas>();
+            var handler = new CadastraTarefaHandler(mock.Object, mockLogger.Object);
+
+            // act
+            CommandResult resultado = handler.Execute(comando);
+
+            // assert
+            Assert.Equal(LogLevel.Debug, levelCapturado);
+            Assert.Contains(tituloTarefaEsperado, mensagemCapturada);
+        }
     }
 }
